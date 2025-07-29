@@ -1,10 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "../contexts/authContext";
+import axios from "axios";
+import { Navigate, useNavigate } from "react-router";
+import { Eye, EyeOff } from "lucide-react";
 
 const LoginForm = () => {
+  const { login, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+  const [data, setData] = useState({
+    username: "",
+    password: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Redirect if already authenticated
+  if (isAuthenticated()) {
+    if (user?.role === "admin") {
+      return <Navigate to="/dashboard/admin" replace />;
+    } else if (user?.role === "employee") {
+      return <Navigate to="/dashboard/employee" replace />;
+    }
+    // Fallback redirect
+    return <Navigate to="/auth" replace />;
+  }
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await axios.post("/users/login", {
+        username: data.username,
+        password: data.password,
+      });
+
+      // Set user data in context state
+      login(response.data); // This should contain {role, username, employee_id}
+
+      // Redirect based on user role
+      if (response.data?.role === "admin") {
+        navigate("/dashboard/admin");
+      } else if (response.data?.role === "employee") {
+        navigate("/dashboard/employee");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Invalid username or password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-      <div></div>
-
       <form
         className="form-control w-full max-w-xs flex flex-col gap-2"
         onSubmit={(e) => {
@@ -12,14 +61,53 @@ const LoginForm = () => {
           handleLogin();
         }}
       >
-        <label className="label">Email</label>
-        <input type="email" className="input" placeholder="Email" />
+        <label className="label">Username</label>
+        <input
+          type="text"
+          className="input"
+          placeholder="Username"
+          value={data.username}
+          onChange={(e) => setData({ ...data, username: e.target.value })}
+          disabled={isLoading}
+          suggested="username"
+          autoComplete="username"
+          required
+        />
 
         <label className="label">Password</label>
-        <input type="password" className="input" placeholder="Password" />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="input"
+            placeholder="Password"
+            value={data.password}
+            onChange={(e) => setData({ ...data, password: e.target.value })}
+            disabled={isLoading}
+            suggested="current-password"
+            autoComplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff /> : <Eye />}
+          </button>
+        </div>
 
-        <button type="submit" className="btn btn-neutral mt-4 w-full">
-          Login
+        {error && <div className="text-error text-sm">{error}</div>}
+
+        <button
+          type="submit"
+          className="btn btn-neutral mt-4 w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className="loading loading-ring loading-sm text-accent"></span>
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
     </fieldset>
