@@ -4,7 +4,7 @@ import { RefreshCcw } from "lucide-react";
 const DashCardSmall = ({ name, value, className = "" }) => {
   return (
     <div
-      className={`card flex flex-col bg-secondary w-full text-secondary-content card-xs p-2 lg:w-72 ${className}`}
+      className={`card flex flex-col bg-primary w-full text-primary-content card-xs p-2 lg:w-72 ${className}`}
     >
       <section className="text-xs lg:text-base w-full">{name}</section>
       <section className="text-2xl lg:text-4xl font-bold">{value}</section>

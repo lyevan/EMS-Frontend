@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import EmployeeHome from "./pages/employeePages/_Home";
 import AdminHome from "./pages/adminPages/_Home";
 import { useUserSessionStore } from "./store/userSessionStore";
+import { useTheme } from "./store/themeStore";
 import axios from "axios";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
   axios.defaults.withCredentials = true;
 
   const initialize = useUserSessionStore((state) => state.initialize);
+  const { theme, setTheme } = useTheme();
 
   // Initialize authentication check on app load
   useEffect(() => {
@@ -23,7 +25,7 @@ function App() {
   }, [initialize]);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center font-montserrat">
+    <div data-theme={theme} className="w-screen h-screen flex justify-center items-center font-montserrat">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/auth" replace />} />

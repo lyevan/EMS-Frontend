@@ -2,17 +2,14 @@ import { create } from "zustand";
 import axios from "axios";
 
 const useUserSessionStore = create((set, get) => ({
-  // State
   user: null,
   isLoading: true,
 
-  // Actions
   setUser: (userData) => set({ user: userData }),
 
   clearUser: () => set({ user: null }),
 
   login: (userData) => {
-    // Store user data in state (role, username, employee_id)
     set({ user: userData });
   },
 
@@ -28,12 +25,9 @@ const useUserSessionStore = create((set, get) => ({
   checkAuthStatus: async () => {
     set({ isLoading: true });
     try {
-      // Make a request to verify authentication (cookies will be sent automatically)
       const response = await axios.post("/users/verify");
       if (response.data && response.data.success) {
-        console.log("Auth check successful:", response.data);
-        // Extract the actual user data from the nested response
-        set({ user: response.data.user, isLoading: false }); // Now contains {role, username, employee_id}
+        set({ user: response.data.user, isLoading: false });
       } else {
         console.log("No user data in response");
         set({ user: null, isLoading: false });
@@ -44,7 +38,6 @@ const useUserSessionStore = create((set, get) => ({
     }
   },
 
-  // Computed/Helper functions
   hasRole: (requiredRole) => {
     const { user } = get();
     return user?.role === requiredRole;
@@ -55,7 +48,6 @@ const useUserSessionStore = create((set, get) => ({
     return !!user;
   },
 
-  // Initialize authentication check
   initialize: async () => {
     const { checkAuthStatus } = get();
     await checkAuthStatus();

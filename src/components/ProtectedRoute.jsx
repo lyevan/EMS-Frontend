@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   const hasRole = useUserSessionStore((state) => state.hasRole);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a proper loading spinner
+    return <div>Loading...</div>;
   }
 
   if (!isAuthenticated()) {

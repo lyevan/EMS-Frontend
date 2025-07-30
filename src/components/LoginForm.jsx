@@ -35,11 +35,9 @@ const LoginForm = () => {
         password: data.password,
       });
 
-      // Set user data in context state
-      const userData = response.data.user || response.data; // Handle both nested and flat response
-      login(userData); // This should contain {role, username, employee_id}
+      const userData = response.data.user || response.data;
+      login(userData);
 
-      // Redirect based on user role
       if (userData?.role === "admin") {
         navigate("/dashboard/admin");
       } else if (userData?.role === "employee") {
@@ -47,7 +45,9 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Invalid username or password");
+      setError(
+        error.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +90,7 @@ const LoginForm = () => {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center z-10"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? <EyeOff /> : <Eye />}

@@ -16,9 +16,12 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { Navigate, useNavigate, useLocation } from "react-router";
+import { useTheme } from "../store/themeStore";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const Sidebar = () => {
   const { user, logout } = useUserSessionStore();
+  const { theme, setTheme } = useTheme();
 
   const [isSidebarSmall, setIsSidebarSmall] = React.useState(true);
   const navigate = useNavigate();
@@ -41,7 +44,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`relative bg-base-300 flex flex-col justify-center text-white h-screen pb-4 transition-all duration-75 ease-in-out border-r border-neutral-600 ${
+      className={`relative bg-base-300 flex flex-col justify-center text-base-content h-screen pb-4 transition-all duration-75 ease-in-out border-r border-neutral-600 ${
         isSidebarSmall ? `w-12 px-0` : "w-48 px-4"
       }`}
     >
@@ -79,7 +82,7 @@ const Sidebar = () => {
           </div>
         ) : (
           <div className="w-full h-8 flex justify-center">
-            <img src="/emplore-dark.png" alt="Brand Logo" className="w-3/4" />
+            <img src="/emplore-light.png" alt="Brand Logo" className="w-3/4" />
           </div>
         )}
       </div>
@@ -103,7 +106,7 @@ const Sidebar = () => {
       {/* Container for button links */}
       <div className="flex flex-col items-center">
         <h1
-          className={`text-xs text-neutral-400 mt-2 text-nowrap  ${
+          className={`text-xs text-base-content mt-2 text-nowrap  ${
             isSidebarSmall ? "px-0" : " self-start px-4"
           }`}
         >
@@ -112,7 +115,7 @@ const Sidebar = () => {
         {/* Admin Links */}
         {user?.role === "admin" && (
           <ul
-            className={`text-white flex flex-col gap-2 pb-2 my-2 border-b border-neutral-600 ${
+            className={`text-base-content flex flex-col gap-2 pb-2 my-2 border-b border-neutral-600 ${
               isSidebarSmall ? "w-12 items-center" : "w-full"
             }`}
           >
@@ -126,11 +129,15 @@ const Sidebar = () => {
                 >
                   <div
                     onClick={() => !isActive && navigate(link.path)}
-                    className={`flex flex-row items-center cursor-pointer py-1 hover:bg-primary rounded text-sm ${
+                    className={`flex flex-row items-center cursor-pointer py-1 hover:bg-primary hover:text-primary-content rounded text-sm ${
                       isSidebarSmall
                         ? "justify-center gap-0 p-2"
                         : "justify-start gap-2 p-2"
-                    }${isActive ? " bg-primary pointer-events-none" : ""}`}
+                    }${
+                      isActive
+                        ? " bg-primary text-primary-content pointer-events-none"
+                        : ""
+                    }`}
                   >
                     {link.logo}
                     <span className={isSidebarSmall ? "hidden" : ""}>
@@ -152,13 +159,13 @@ const Sidebar = () => {
         <button
           className={
             isSidebarSmall
-              ? "tooltip items-end tooltip-right tooltip-error w-full p-1"
+              ? "tooltip items-end tooltip-right tooltip-error text-error-content w-full p-1"
               : ""
           }
           data-tip="Logout"
         >
           <div
-            className={`flex rounded px-2 cursor-pointer hover:bg-error py-1 gap-2 w-full font-montserrat items-center font-medium text-sm ${
+            className={`flex rounded px-2 cursor-pointer hover:bg-error hover:text-error-content py-1 gap-2 w-full font-montserrat items-center font-medium text-sm ${
               isSidebarSmall ? "justify-center" : "justify-center p-0"
             }`}
             onClick={logout}
@@ -168,6 +175,10 @@ const Sidebar = () => {
             {isSidebarSmall ? "" : "Logout"}
           </div>
         </button>
+      </div>
+
+      <div className="flex justify-center">
+        <ThemeSwitcher />
       </div>
     </div>
   );
