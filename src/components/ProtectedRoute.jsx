@@ -1,9 +1,12 @@
 import React from "react";
 import { Navigate } from "react-router";
-import { useAuth } from "../contexts/authContext";
+import { useUserSessionStore } from "../store/userSessionStore";
 
 const ProtectedRoute = ({ children, requiredRole = null }) => {
-  const { user, isAuthenticated, hasRole, isLoading } = useAuth();
+  const user = useUserSessionStore((state) => state.user);
+  const isLoading = useUserSessionStore((state) => state.isLoading);
+  const isAuthenticated = useUserSessionStore((state) => state.isAuthenticated);
+  const hasRole = useUserSessionStore((state) => state.hasRole);
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a proper loading spinner

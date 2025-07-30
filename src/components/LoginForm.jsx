@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/authContext";
+import { useUserSessionStore } from "../store/userSessionStore";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
 
 const LoginForm = () => {
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user } = useUserSessionStore();
   const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
@@ -36,12 +36,13 @@ const LoginForm = () => {
       });
 
       // Set user data in context state
-      login(response.data); // This should contain {role, username, employee_id}
+      const userData = response.data.user || response.data; // Handle both nested and flat response
+      login(userData); // This should contain {role, username, employee_id}
 
       // Redirect based on user role
-      if (response.data?.role === "admin") {
+      if (userData?.role === "admin") {
         navigate("/dashboard/admin");
-      } else if (response.data?.role === "employee") {
+      } else if (userData?.role === "employee") {
         navigate("/dashboard/employee");
       }
     } catch (error) {

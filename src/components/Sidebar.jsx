@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "../contexts/authContext";
+import { useUserSessionStore } from "../store/userSessionStore";
 import axios from "axios";
 import {
   Home,
@@ -18,7 +18,7 @@ import {
 import { Navigate, useNavigate, useLocation } from "react-router";
 
 const Sidebar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useUserSessionStore();
 
   const [isSidebarSmall, setIsSidebarSmall] = React.useState(true);
   const navigate = useNavigate();
