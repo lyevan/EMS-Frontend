@@ -1,0 +1,181 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import RefreshButton from "./RefreshButton";
+import { UserCircle2, ShieldCheck, ShieldAlert } from "lucide-react";
+
+const PersonalInfo = ({ employee }) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <div className="hidden sm:block">
+        {employee.avatar ? (
+          <img
+            src={employee.avatar}
+            alt="Avatar"
+            className="w-8 h-8 rounded-full"
+          />
+        ) : (
+          <UserCircle2 className="w-8 h-8" />
+        )}
+      </div>
+      <div>
+        <div className="flex flex-row items-center gap-1">
+          <p className="font-bold text-[0.75rem] mb-[0.2rem] sm:font-normal sm:text-xs">{`${employee.first_name} ${employee.last_name}`}</p>
+          <div className="sm:hidden bg-success w-2 h-2 rounded-full"> </div>
+        </div>
+        <p className="text-[0.6rem] text-neutral">{employee.email}</p>
+        <p className="text-[0.6rem] text-neutral">{employee.phone}</p>
+      </div>
+    </div>
+  );
+};
+
+const RFIDBadge = ({ rfid, clickHandler }) => {
+  if (!rfid)
+    return (
+      <button className="btn" onClick={clickHandler}>
+        <ShieldAlert className="w-6 h-6 text-warning" />
+      </button>
+    );
+  return (
+    <button className="btn" onClick={clickHandler}>
+      <ShieldCheck className="w-6 h-6 text-success" />
+    </button>
+  );
+};
+
+const tabList = [
+  { name: "All Employees" },
+  { name: "Active Employees" },
+  { name: "Inactive Employees" },
+];
+
+const EmployeeTable = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [employeeData, setEmployeeData] = useState([]);
+  const [activeTab, setActiveTab] = useState("All Employees");
+  const [isRFIDModalOpen, setIsRFIDModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch employee data from API
+      const result = await axios.get("/employees");
+      console.log(result.data.data);
+      setEmployeeData(result.data.data);
+    };
+
+    fetchData();
+  }, [isRefreshing]);
+
+  const handleRFID = async (employee_id, rfid) => {
+    if (!rfid) {
+      // Handle case when RFID is not set
+      const result = await axios.post("/rfid", {
+        employee_id,
+      });
+      console.log(result.data);
+    }
+  };
+
+  const handleMoreInfo = (employee) => {
+    console.log("More info for employee:", employee.employee_id);
+  };
+
+  return (
+    <div>
+      <RefreshButton
+        isRefreshing={isRefreshing}
+        setIsRefreshing={setIsRefreshing}
+      />
+
+      {/* <div role="tablist" className="tabs tabs-lift">
+        {tabList.map((tab) => (
+          <input
+            type="radio"
+            name={tab}
+            className="tab"
+            aria-label={tab.name}
+            onChange={() => setActiveTab(tab.name)}
+            checked={activeTab === tab.name}
+          />
+        ))}
+      </div> */}
+      <div className="overflow-x-hidden sm:overflow-x-auto">
+        <table className="table table-xs table-pin-rows table-pin-cols">
+          <thead>
+            <tr>
+              <th className="bg-base-200 border-b border-base-300 text-center">
+                ID
+              </th>
+              <th className="bg-base-200">Personal Info</th>
+              <th className="bg-base-200 text-center">Enrolled</th>
+              <th className="bg-base-200 hidden sm:table-cell">Position</th>
+              <th className="bg-base-200 hidden md:table-cell">Department</th>
+              <th className="bg-base-200 hidden lg:table-cell">Status</th>
+              <th className="bg-base-200 hidden sm:table-cell">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeeData?.map((employee) => (
+              <tr key={employee.employee_id}>
+                <th className="bg-base-200 border-b border-base-300 text-center">
+                  {employee.employee_id}
+                </th>
+                <td className="relative">
+                  <button
+                    className="absolute inset-0 sm:hidden"
+                    onClick={() => handleMoreInfo(employee)}
+                  ></button>
+                  <PersonalInfo employee={employee} />
+                  <dl className="sm:hidden mt-[0.3rem]">
+                    <dt className="sr-only">Position</dt>
+                    <dd className="text-[0.5rem] text-neutral sm:table-cell">
+                      {employee.position}
+                    </dd>
+                    <dt className="sr-only">Department</dt>
+                    <dd className="text-[0.5rem] text-neutral md:table-cell">
+                      {employee.department}
+                    </dd>
+                  </dl>
+                </td>
+                <td className="flex justify-center items-center pt-2">
+                  {
+                    <RFIDBadge
+                      rfid={employee.rfid}
+                      clickHandler={() =>
+                        handleRFID(employee.employee_id, employee.rfid)
+                      }
+                    />
+                  }
+                </td>
+                <td className="hidden sm:table-cell">{employee.position}</td>
+                <td className="hidden md:table-cell">{employee.department}</td>
+                <td className="hidden lg:table-cell">
+                  <div
+                    className={`badge badge-soft ${
+                      employee.status.toLowerCase() !== "active"
+                        ? "badge-warning"
+                        : "badge-success"
+                    }`}
+                  >
+                    {employee.status.charAt(0).toUpperCase() +
+                      employee.status.slice(1)}
+                  </div>
+                </td>
+                <td className="hidden sm:table-cell">
+                  <button
+                    className="btn btn-xs btn-primary"
+                    onClick={() => handleMoreInfo(employee)}
+                  >
+                    More Info
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default EmployeeTable;

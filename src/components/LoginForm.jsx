@@ -62,7 +62,7 @@ const LoginForm = () => {
           handleLogin();
         }}
       >
-        <label className="label">Username</label>
+        <label className="label text-base-content">Username</label>
         <input
           type="text"
           className="input"
@@ -75,7 +75,7 @@ const LoginForm = () => {
           required
         />
 
-        <label className="label">Password</label>
+        <label className="label text-base-content">Password</label>
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -101,7 +101,7 @@ const LoginForm = () => {
 
         <button
           type="submit"
-          className="btn btn-neutral mt-4 w-full"
+          className="btn btn-primary w-full"
           disabled={isLoading}
         >
           {isLoading ? (

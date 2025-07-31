@@ -8,8 +8,8 @@ const ThemeSwitcher = () => {
       {/* this hidden checkbox controls the state */}
       <input
         type="checkbox"
-        checked={theme === "business"}
-        onChange={() => setTheme(theme === "lofi" ? "business" : "lofi")}
+        checked={theme === "hr-corporate-light"}
+        onChange={() => setTheme(theme === "hr-corporate-light" ? "hr-corporate-dark" : "hr-corporate-light")}
       />
 
       {/* sun icon */}

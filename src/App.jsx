@@ -7,6 +7,7 @@ import AdminDashboard from "./pages/adminPages/_AdminDashboard";
 import EmployeeDashboard from "./pages/employeePages/_EmployeeDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EmployeeHome from "./pages/employeePages/_Home";
+import Employee from "./pages/adminPages/Employee";
 import AdminHome from "./pages/adminPages/_Home";
 import { useUserSessionStore } from "./store/userSessionStore";
 import { useTheme } from "./store/themeStore";
@@ -25,7 +26,10 @@ function App() {
   }, [initialize]);
 
   return (
-    <div data-theme={theme} className="w-screen h-screen flex justify-center items-center font-montserrat">
+    <div
+      data-theme={theme}
+      className="w-screen h-screen flex justify-center items-center font-montserrat"
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/auth" replace />} />
@@ -48,7 +52,7 @@ function App() {
               path="attendance"
               element={<div>Attendance Management</div>}
             />
-            <Route path="employees" element={<div>Employee Management</div>} />
+            <Route path="employees" element={<Employee />} />
             <Route path="payroll" element={<div>Payroll Management</div>} />
             <Route path="reports" element={<div>Reports</div>} />
             <Route path="requests" element={<div>Requests</div>} />

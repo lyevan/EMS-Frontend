@@ -18,12 +18,14 @@ import {
 import { Navigate, useNavigate, useLocation } from "react-router";
 import { useTheme } from "../store/themeStore";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useSidebar } from "../store/sidebarStore";
+import SidebarSizeButton from "./SidebarSizeButton";
 
 const Sidebar = () => {
   const { user, logout } = useUserSessionStore();
   const { theme, setTheme } = useTheme();
+  const { isSidebarSmall, toggleSidebar } = useSidebar();
 
-  const [isSidebarSmall, setIsSidebarSmall] = React.useState(true);
   const navigate = useNavigate();
   const location = useLocation().pathname;
 
@@ -44,28 +46,10 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`relative bg-base-300 flex flex-col justify-center text-base-content h-screen pb-4 transition-all duration-75 ease-in-out border-r border-neutral-600 ${
+      className={`relative bg-base-100 flex flex-col justify-center text-base-content h-screen pb-4 transition-all duration-75 ease-in-out border-r border-base-300 z-50 ${
         isSidebarSmall ? `w-12 px-0` : "w-48 px-4"
       }`}
     >
-      {/* Container for sidebar button */}
-      <div
-        className={`m-0 p-0 flex absolute top-5 ${
-          isSidebarSmall ? `justify-center left-11` : `justify-end left-40`
-        }`}
-      >
-        <button
-          onClick={() => setIsSidebarSmall(!isSidebarSmall)}
-          className="flex justify-center items-center bg-base-300 rounded"
-        >
-          {isSidebarSmall ? (
-            <PanelLeftOpen size={16} />
-          ) : (
-            <PanelLeftClose size={16} />
-          )}
-        </button>
-      </div>
-
       {/* Brand Header */}
       <div
         className={`flex w-full flex-row gap-2 items-center py-4 border-neutral-600 ${
@@ -89,7 +73,7 @@ const Sidebar = () => {
 
       {/* Company Header */}
       <div
-        className={`flex w-full flex-row gap-2 items-center py-4 border-y border-neutral-600 ${
+        className={`flex w-full flex-row gap-2 items-center py-4 border-y border-base-300 ${
           isSidebarSmall ? "justify-center pl-0" : "pl-2"
         }`}
       >
@@ -115,7 +99,7 @@ const Sidebar = () => {
         {/* Admin Links */}
         {user?.role === "admin" && (
           <ul
-            className={`text-base-content flex flex-col gap-2 pb-2 my-2 border-b border-neutral-600 ${
+            className={`text-base-content flex flex-col gap-2 pb-2 my-2 border-b border-base-300 ${
               isSidebarSmall ? "w-12 items-center" : "w-full"
             }`}
           >
@@ -156,16 +140,17 @@ const Sidebar = () => {
 
       {/* Container for logout button */}
       <div className="flex-1 flex flex-col justify-start">
+        {" "}
         <button
           className={
             isSidebarSmall
-              ? "tooltip items-end tooltip-right tooltip-error text-error-content w-full p-1"
+              ? "tooltip items-end tooltip-right tooltip-error text-error-content w-full p-1 z-[60]"
               : ""
           }
           data-tip="Logout"
         >
           <div
-            className={`flex rounded px-2 cursor-pointer hover:bg-error hover:text-error-content py-1 gap-2 w-full font-montserrat items-center font-medium text-sm ${
+            className={`flex rounded px-2 cursor-pointer text-base-content hover:bg-error hover:text-error-content py-1 gap-2 w-full font-montserrat items-center font-medium text-sm ${
               isSidebarSmall ? "justify-center" : "justify-center p-0"
             }`}
             onClick={logout}
