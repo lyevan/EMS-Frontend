@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import EmployeeHome from "./pages/employeePages/_Home";
 import Employee from "./pages/adminPages/Employee";
 import AdminHome from "./pages/adminPages/_Home";
+import Registration from "./pages/Registration";
 import { useUserSessionStore } from "./store/userSessionStore";
 import { useTheme } from "./store/themeStore";
 import axios from "axios";
@@ -38,6 +39,10 @@ function App() {
           <Route path="/" element={<Navigate to="/auth" replace />} />
           <Route path="/auth" element={<Authentication />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route
+            path="/complete-registration/:token"
+            element={<Registration />}
+          />
 
           {/* Protected Admin Routes */}
           <Route

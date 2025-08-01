@@ -23,6 +23,21 @@ const useUserSessionStore = create((set, get) => ({
     }
   },
   checkAuthStatus: async () => {
+    // Define paths that don't require authentication
+    const excludedPaths = [
+      "/complete-registration",
+      "/unauthorized",
+      "/public",
+      "/reset-password",
+    ];
+    const currentPath = window.location.pathname;
+
+    // Skip auth check for excluded paths
+    if (excludedPaths.some((path) => currentPath.startsWith(path))) {
+      set({ isLoading: false });
+      return;
+    }
+
     set({ isLoading: true });
     try {
       const response = await axios.post("/users/verify");
