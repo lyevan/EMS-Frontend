@@ -12,6 +12,8 @@ import AdminHome from "./pages/adminPages/_Home";
 import { useUserSessionStore } from "./store/userSessionStore";
 import { useTheme } from "./store/themeStore";
 import axios from "axios";
+import Toast from "./components/Toast";
+import useToastStore from "./store/toastStore";
 
 function App() {
   axios.defaults.baseURL = "http://192.168.254.107:3000/api";
@@ -31,6 +33,7 @@ function App() {
       className="w-screen h-screen flex justify-center items-center font-montserrat"
     >
       <BrowserRouter>
+        <Toast />
         <Routes>
           <Route path="/" element={<Navigate to="/auth" replace />} />
           <Route path="/auth" element={<Authentication />} />

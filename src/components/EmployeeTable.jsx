@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import RefreshButton from "./RefreshButton";
-import { UserCircle2, ShieldCheck, ShieldAlert } from "lucide-react";
+import {
+  UserCircle2,
+  ShieldCheck,
+  ShieldAlert,
+  Info,
+  Mail,
+} from "lucide-react";
+import RFIDModal from "./RFIDModal";
+import Toast from "./Toast";
+import useToastStore from "../store/toastStore";
 
 const PersonalInfo = ({ employee }) => {
   return (
@@ -42,7 +51,6 @@ const RFIDBadge = ({ rfid, clickHandler }) => {
     </button>
   );
 };
-
 const tabList = [
   { name: "All Employees" },
   { name: "Active Employees" },
@@ -54,27 +62,23 @@ const EmployeeTable = () => {
   const [employeeData, setEmployeeData] = useState([]);
   const [activeTab, setActiveTab] = useState("All Employees");
   const [isRFIDModalOpen, setIsRFIDModalOpen] = useState(false);
+  const [activeEmployee, setActiveEmployee] = useState({});
+
+  const { showToast } = useToastStore();
+
+  useEffect(() => {
+    setIsRefreshing(!isRefreshing);
+  }, [isRFIDModalOpen]);
 
   useEffect(() => {
     const fetchData = async () => {
       // Fetch employee data from API
       const result = await axios.get("/employees");
-      console.log(result.data.data);
       setEmployeeData(result.data.data);
     };
 
     fetchData();
   }, [isRefreshing]);
-
-  const handleRFID = async (employee_id, rfid) => {
-    if (!rfid) {
-      // Handle case when RFID is not set
-      const result = await axios.post("/rfid", {
-        employee_id,
-      });
-      console.log(result.data);
-    }
-  };
 
   const handleMoreInfo = (employee) => {
     console.log("More info for employee:", employee.employee_id);
@@ -86,6 +90,12 @@ const EmployeeTable = () => {
         isRefreshing={isRefreshing}
         setIsRefreshing={setIsRefreshing}
       />
+      <RFIDModal
+        employee={activeEmployee}
+        isModalOpen={isRFIDModalOpen}
+        setIsModalOpen={setIsRFIDModalOpen}
+      />
+      <Toast />
 
       {/* <div role="tablist" className="tabs tabs-lift">
         {tabList.map((tab) => (
@@ -110,8 +120,12 @@ const EmployeeTable = () => {
               <th className="bg-base-200 text-center">Enrolled</th>
               <th className="bg-base-200 hidden sm:table-cell">Position</th>
               <th className="bg-base-200 hidden md:table-cell">Department</th>
-              <th className="bg-base-200 hidden lg:table-cell">Status</th>
-              <th className="bg-base-200 hidden sm:table-cell">Actions</th>
+              <th className="bg-base-200 hidden lg:table-cell text-center">
+                Status
+              </th>
+              <th className="bg-base-200 hidden sm:table-cell text-center">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -141,17 +155,18 @@ const EmployeeTable = () => {
                   {
                     <RFIDBadge
                       rfid={employee.rfid}
-                      clickHandler={() =>
-                        handleRFID(employee.employee_id, employee.rfid)
-                      }
+                      clickHandler={() => {
+                        setActiveEmployee(employee);
+                        setIsRFIDModalOpen(true);
+                      }}
                     />
                   }
                 </td>
                 <td className="hidden sm:table-cell">{employee.position}</td>
                 <td className="hidden md:table-cell">{employee.department}</td>
-                <td className="hidden lg:table-cell">
+                <td className="hidden lg:table-cell text-center">
                   <div
-                    className={`badge badge-soft ${
+                    className={`badge font-semibold ${
                       employee.status.toLowerCase() !== "active"
                         ? "badge-warning"
                         : "badge-success"
@@ -161,12 +176,18 @@ const EmployeeTable = () => {
                       employee.status.slice(1)}
                   </div>
                 </td>
-                <td className="hidden sm:table-cell">
+                <td className="hidden sm:table-cell text-center space-x-1.5">
                   <button
-                    className="btn btn-xs btn-primary"
+                    className="text-accent"
                     onClick={() => handleMoreInfo(employee)}
                   >
-                    More Info
+                    <Info />
+                  </button>
+                  <button
+                    className="text-warning"
+                    onClick={() => handleMoreInfo(employee)}
+                  >
+                    <Mail />
                   </button>
                 </td>
               </tr>

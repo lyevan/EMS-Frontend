@@ -6,6 +6,7 @@ import SidebarSizeButton from "../../components/SidebarSizeButton";
 
 const AdminDashboard = () => {
   // const { user } = useAuth();
+
   const location = useLocation().pathname;
   const locationName =
     location.split("/").pop().replace(/-/g, " ").charAt(0).toUpperCase() +
