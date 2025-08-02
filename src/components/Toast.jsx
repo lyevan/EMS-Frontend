@@ -24,7 +24,7 @@ const Toast = () => {
   };
 
   return (
-    <div className="toast toast-top toast-end z-50">
+    <div className="toast toast-top toast-end z-100">
       <div className={`${getAlertClass(type)}`}>
         <CircleCheck className="w-6 h-6 mr-2" />
         <span>{message}</span>

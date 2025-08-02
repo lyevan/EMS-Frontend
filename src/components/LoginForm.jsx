@@ -3,10 +3,12 @@ import { useUserSessionStore } from "../store/userSessionStore";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
+import useToastStore from "../store/toastStore";
 
 const LoginForm = () => {
   const { login, isAuthenticated, user } = useUserSessionStore();
   const navigate = useNavigate();
+  const { showToast } = useToastStore();
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -40,8 +42,11 @@ const LoginForm = () => {
 
       if (userData?.role === "admin") {
         navigate("/dashboard/admin");
+        showToast("Login successful!", "success");
+
       } else if (userData?.role === "employee") {
         navigate("/dashboard/employee");
+        showToast("Login successful!", "success");
       }
     } catch (error) {
       console.error("Login failed:", error);

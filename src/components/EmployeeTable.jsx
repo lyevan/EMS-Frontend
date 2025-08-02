@@ -6,7 +6,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   Info,
-  Mail,
+  SquarePen,
 } from "lucide-react";
 import RFIDModal from "./RFIDModal";
 import Toast from "./Toast";
@@ -177,17 +177,19 @@ const EmployeeTable = () => {
                   </div>
                 </td>
                 <td className="hidden sm:table-cell text-center space-x-1.5">
+                  <div className="tooltip tooltip-left" data-tip="More Info">
+                    <button
+                      className="text-accent cursor-pointer"
+                      onClick={() => handleMoreInfo(employee)}
+                    >
+                      <Info />
+                    </button>
+                  </div>
                   <button
-                    className="text-accent"
+                    className="text-warning cursor-pointer"
                     onClick={() => handleMoreInfo(employee)}
                   >
-                    <Info />
-                  </button>
-                  <button
-                    className="text-warning"
-                    onClick={() => handleMoreInfo(employee)}
-                  >
-                    <Mail />
+                    <SquarePen />
                   </button>
                 </td>
               </tr>

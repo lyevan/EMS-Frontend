@@ -20,6 +20,7 @@ import { useTheme } from "../store/themeStore";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useSidebar } from "../store/sidebarStore";
 import SidebarSizeButton from "./SidebarSizeButton";
+import useToastStore from "../store/toastStore";
 
 const Sidebar = () => {
   const { user, logout } = useUserSessionStore();
@@ -28,6 +29,7 @@ const Sidebar = () => {
 
   const navigate = useNavigate();
   const location = useLocation().pathname;
+  const { showToast } = useToastStore();
 
   const adminLinks = [
     { name: "Home", path: "home", logo: <Home /> },
@@ -153,7 +155,10 @@ const Sidebar = () => {
             className={`flex rounded px-2 cursor-pointer text-base-content hover:bg-error hover:text-error-content py-1 gap-2 w-full font-montserrat items-center font-medium text-sm ${
               isSidebarSmall ? "justify-center" : "justify-center p-0"
             }`}
-            onClick={logout}
+            onClick={() => {
+              showToast("Logged out successfully", "success");
+              logout();
+            }}
           >
             <LogOut />
 
