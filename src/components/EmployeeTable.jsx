@@ -7,10 +7,12 @@ import {
   ShieldAlert,
   Info,
   SquarePen,
+  UserPlus,
 } from "lucide-react";
 import RFIDModal from "./RFIDModal";
 import Toast from "./Toast";
 import useToastStore from "../store/toastStore";
+import PendingEmployeeForm from "./forms/PendingEmployeeForm";
 
 const PersonalInfo = ({ employee }) => {
   return (
@@ -62,6 +64,7 @@ const EmployeeTable = () => {
   const [employeeData, setEmployeeData] = useState([]);
   const [activeTab, setActiveTab] = useState("All Employees");
   const [isRFIDModalOpen, setIsRFIDModalOpen] = useState(false);
+  const [isPendingFormOpen, setIsPendingFormOpen] = useState(false);
   const [activeEmployee, setActiveEmployee] = useState({});
 
   const { showToast } = useToastStore();
@@ -86,14 +89,28 @@ const EmployeeTable = () => {
 
   return (
     <div>
-      <RefreshButton
-        isRefreshing={isRefreshing}
-        setIsRefreshing={setIsRefreshing}
-      />
+      <div className="flex justify-end items-center mb-4 gap-4">
+        <button
+          className="btn btn-primary"
+          onClick={() => setIsPendingFormOpen(true)}
+          aria-label="Add Pending Employee"
+          title="Add Pending Employee"
+        >
+          <UserPlus />
+        </button>
+        <RefreshButton
+          isRefreshing={isRefreshing}
+          setIsRefreshing={setIsRefreshing}
+        />
+      </div>
       <RFIDModal
         employee={activeEmployee}
         isModalOpen={isRFIDModalOpen}
         setIsModalOpen={setIsRFIDModalOpen}
+      />
+      <PendingEmployeeForm
+        isModalOpen={isPendingFormOpen}
+        setIsModalOpen={setIsPendingFormOpen}
       />
       <Toast />
 

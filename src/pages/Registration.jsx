@@ -189,37 +189,36 @@ const Registration = () => {
       fields: ["emergencyContactName", "emergencyContactPhone"],
     },
   ];
+  // Load employment data from token (backend middleware handles verification)
+  useEffect(() => {
+    const loadEmploymentData = async () => {
+      try {
+        const result = await axios.get(
+          `/invite/complete-registration/${token}`
+        );
+        if (result.data?.employmentData) {
+          const empData = result.data.employmentData;
+          setFormData((prev) => ({
+            ...prev,
+            email: empData.email || "",
+            phone: empData.phone || "",
+            department: empData.department || "",
+            position: empData.position || "",
+            hourlyRate: empData.hourly_rate || "",
+            hireDate: empData.hire_date || "",
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading employment data:", error);
+        showToast("Failed to load registration data", "error");
+        navigate("/unauthorized");
+      }
+    };
 
-  // Verify token and load employment data
-  // useEffect(() => {
-  //   const verifyToken = async () => {
-  //     try {
-  //       const result = await axios.get(
-  //         `/invite/complete-registration/${token}`
-  //       );
-  //       if (result.data?.valid && result.data?.employmentData) {
-  //         const empData = result.data.employmentData;
-  //         setFormData((prev) => ({
-  //           ...prev,
-  //           email: empData.email || "",
-  //           phone: empData.phone || "",
-  //           department: empData.department || "",
-  //           position: empData.position || "",
-  //           hourlyRate: empData.hourly_rate || "",
-  //           hireDate: empData.hire_date || "",
-  //         }));
-  //       }
-  //     } catch (error) {
-  //       console.error("Error verifying token:", error.message);
-  //       showToast("Invalid or expired registration link", "error");
-  //       navigate("/unauthorized");
-  //     }
-  //   };
-
-  //   if (token) {
-  //     verifyToken();
-  //   }
-  // }, [token, navigate, showToast]);
+    if (token) {
+      loadEmploymentData();
+    }
+  }, [token, navigate, showToast]);
 
   // Validate current step
   const validateStep = (stepIndex) => {
