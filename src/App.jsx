@@ -31,7 +31,7 @@ function App() {
   return (
     <div
       data-theme={theme}
-      className="w-screen h-screen flex justify-center items-center font-montserrat"
+      className="w-screen h-screen flex justify-center items-center"
     >
       <BrowserRouter>
         <Toast />

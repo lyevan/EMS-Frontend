@@ -7,6 +7,7 @@ const Input = ({
   type = "text",
   required = false,
   onChange,
+  step = "1",
 }) => {
   return (
     <section className="flex flex-col gap-2">
@@ -30,9 +31,10 @@ const Input = ({
           type={type}
           name={name}
           required={required}
-          className="grow"
-          placeholder={label}
+          className="grow placeholder:text-base-content"
+          placeholder={"Enter " + label.toLowerCase()}
           onChange={onChange}
+          step={step}
         />
       </label>
     </section>

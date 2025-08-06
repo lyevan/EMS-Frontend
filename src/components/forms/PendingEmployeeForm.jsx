@@ -10,7 +10,7 @@ import {
   PhilippinePeso,
   CalendarPlus,
 } from "lucide-react";
-
+import useToastStore from "../../store/toastStore";
 const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -21,17 +21,33 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
     hire_date: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastStore();
   const handleSubmit = async () => {
     console.log(formData);
     try {
       setIsLoading(true);
       const response = await axios.post("/invite/pending", formData);
       console.log("Success:", response.data);
+      showToast("Pending employee added successfully!", "success");
+      clearFields();
+      setIsModalOpen(false); // Close modal after successful submission
     } catch (error) {
       console.error("Error:", error);
+      showToast(error.response.data.message, "error");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const clearFields = () => {
+    setFormData({
+      email: "",
+      phone: "",
+      department: "",
+      position: "",
+      hourly_rate: "",
+      hire_date: "",
+    });
   };
 
   return (
@@ -41,7 +57,15 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
       className="modal"
     >
       <div className="modal-box shadow-none outline-2 outline-neutral">
-        <form method="dialog" onSubmit={() => handleSubmit()}>
+        <form
+          method="dialog"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!isLoading) {
+              await handleSubmit();
+            }
+          }}
+        >
           <h3 className="font-bold text-lg">Add Pending Employee</h3>
           <p className="pt-4 pb-1 text-xs">Please fill in the details below:</p>
           <p className="pb-4 pl-2 text-error text-xs">* Required</p>
@@ -51,6 +75,7 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
               label="Email"
               name="email"
               type="email"
+              value={formData.email}
               required
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -61,22 +86,24 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
               label="Phone Number"
               name="phone"
               type="tel"
+              value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
-            />
+            />{" "}
             <Select
               icon={<Building />}
               label="Department"
               name="department"
               required
+              value={formData.department}
               onChange={(e) =>
                 setFormData({ ...formData, department: e.target.value })
               }
               options={[
-                { value: "1", label: "HR" },
-                { value: "2", label: "Engineering" },
-                { value: "3", label: "Sales" },
+                { value: "hr", label: "HR" },
+                { value: "engineering", label: "Engineering" },
+                { value: "sales", label: "Sales" },
               ]}
             />
             <Select
@@ -84,13 +111,14 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
               label="Position"
               name="position"
               required
+              value={formData.position}
               onChange={(e) =>
                 setFormData({ ...formData, position: e.target.value })
               }
               options={[
-                { value: "1", label: "Supervisor" },
-                { value: "2", label: "Manager" },
-                { value: "3", label: "Staff" },
+                { value: "supervisor", label: "Supervisor" },
+                { value: "manager", label: "Manager" },
+                { value: "staff", label: "Staff" },
               ]}
             />
             <Input
@@ -98,6 +126,8 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
               label="Hourly Rate"
               name="hourly_rate"
               type="number"
+              step="0.01"
+              value={formData.hourly_rate}
               required
               onChange={(e) =>
                 setFormData({ ...formData, hourly_rate: e.target.value })
@@ -108,6 +138,7 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
               label="Hire Date"
               name="hire_date"
               type="date"
+              value={formData.hire_date}
               required
               onChange={(e) =>
                 setFormData({ ...formData, hire_date: e.target.value })
@@ -116,12 +147,22 @@ const PendingEmployeeForm = ({ isModalOpen, setIsModalOpen }) => {
           </div>
 
           <div className="modal-action">
-            <button className="btn btn-info" type="submit">
-              Submit
+            <button
+              className="btn btn-info w-25"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading loading-ring loading-sm text-accent"></span>
+              ) : (
+                "Submit"
+              )}
             </button>
             <button
               className="btn btn-error"
+              type="button"
               onClick={() => setIsModalOpen(false)}
+              disabled={isLoading}
             >
               Cancel
             </button>
